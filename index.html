@@ -51,7 +51,7 @@
                     <div v-else>
                         <div class="title3">The ghost is a</div>
                         <div class="resContainer">
-                            <div class="ghostRes">{{avaliableGhosts[0]}}</div>
+                            <div class="ghostRes" @click="clearSelection">{{avaliableGhosts[0]}}</div>
                         </div>
                     </div>
             </div>
@@ -334,6 +334,7 @@
         border: 5px solid red;
         padding: 0 10px;
         border-radius: 16px;
+        cursor: pointer;
     }
 
     select,
