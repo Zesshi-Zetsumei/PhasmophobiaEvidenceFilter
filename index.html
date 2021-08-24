@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="./vue.min.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <div class="container">
+            <div class="box">
+                <h3 @click="clearSelection">Phasmophobia Filter Tool</h2>
+                    <div class="selections">
+                        <div v-for="(item, index) in currentEvidence" class="evidence">
+                            <div>Evidence {{index+1}}</div>
+                            <select v-model="currentEvidence[index]" @change="handleChange(index)">
+                                <option :value="''">None</option>
+                                <option :value="evidence" v-for="(evidence, i) in optionList[index]">
+                                    {{evidence}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="bar"></div>
+                    <div v-if="avaliableGhosts.length !== 1">
+                        <div class="mylist">
+                            <div class="title1">Possible Choice for Evidence {{title1Num}}</div>
+                            <div class="bottom">
+                                <div v-for="item in avaliableEvidence" class="ev" @click="handleEvClick(item)"> {{item}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bar"></div>
+                        <div class="title2">Possible Ghosts and Details</div>
+                        <div class="ulContainer">
+                            <ul class="table">
+                                <li v-for="(key, index) in sortGhosts(Object.keys(info))" :key="key">
+                                    <div class="left">{{key}}</div>
+                                    <div class="right">
+                                        <span v-for="(ev, index) in info[key]" :key="index">
+                                            {{ev+((index ===info[key].length-1)?'':' + ')}}
+                                        </span>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div v-else>
+                        <div class="title3">The ghost is a</div>
+                        <div class="resContainer">
+                            <div class="ghostRes">{{avaliableGhosts[0]}}</div>
+                        </div>
+                    </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const ghostOrder = ["Spirit", "Wraith", "Phantom", "Poltergeist", "Banshee", "Jinn", "Mare", "Revenant", "Shade", "Demon", "Yurei", "Oni", "Yokai", "Hantu"]
+        new Vue({
+            el: '#app',
+            data() {
+                return {
+                    evidenceList: {
+                        EMF5: ['Phantom', 'Banshee', 'Jinn', 'Shade', 'Oni', 'Revenant'],
+                        SpiritBox: ['Mare', 'Demon', 'Wraith', 'Jinn', 'Oni', 'Poltergeist', 'Spirit', 'Yokai'],
+                        Fingerprints: ['Banshee', 'Wraith', 'Revenant', 'Poltergeist', 'Spirit', 'Hantu'],
+                        Orbs: ['Phantom', 'Mare', 'Yurei', 'Jinn', 'Shade', 'Poltergeist', 'Hantu', 'Yokai'],
+                        Writing: ['Yurei', 'Demon', 'Shade', 'Oni', 'Revenant', 'Spirit', 'Hantu', 'Yokai'],
+                        Freezing: ['Phantom', 'Banshee', 'Mare', 'Yurei', 'Demon', 'Wraith']
+                    },
+                    ghostList: {},
+                    currentEvidence: ['', '', ''],
+                    optionList: []
+                }
+            },
+            computed: {
+                avaliableGhosts() {
+                    let counter = 0
+                    const ghostsCounter = {}
+                    for (let i = 0; i < this.currentEvidence.length; i++) {
+                        const current = this.currentEvidence[i]
+                        if (!current) {
+                            continue
+                        }
+                        const currentArr = this.evidenceList[current]
+                        counter++
+                        for (let j = 0; j < currentArr.length; j++) {
+                            const currentGhost = currentArr[j]
+                            if (!(currentGhost in ghostsCounter)) ghostsCounter[currentGhost] = 0
+                            ghostsCounter[currentGhost]++
+                        }
+                    }
+                    if (counter === 0) return this.sortGhosts(Object.keys(this.ghostList))
+                    const res = []
+                    for (let ghost in ghostsCounter) {
+                        const currentCount = ghostsCounter[ghost]
+                        if (currentCount === counter) res.push(ghost)
+                    }
+                    return this.sortGhosts(res)
+                },
+                avaliableEvidence() {
+                    for (let i = 0; i < this.currentEvidence.length; i++) {
+                        const current = this.currentEvidence[i]
+                        if (!current) return this.optionList[i]
+                    }
+                    return []
+                },
+                info() {
+                    const table = {}
+                    this.avaliableGhosts.forEach(ghost => {
+                        table[ghost] = this.sortEvidence(this.ghostList[ghost].filter(e => !this.currentEvidence.includes(e)))
+                    })
+                    return table
+                },
+                title1Num() {
+                    const res = []
+                    this.currentEvidence.forEach((ev, index) => {
+                        !ev && res.push(index + 1)
+                    })
+                    return res.join(' & ')
+                }
+            },
+            created() {
+                this.initGhostList()
+                this.initOptionList()
+            },
+            methods: {
+                notify(index) {
+                    for (let i = 0; i < this.currentEvidence.length; i++) {
+                        if (i !== index) this.update(i)
+                    }
+                },
+                update(ind) {
+                    let counter = 0
+                    const ghostsCounter = {}
+                    for (let i = 0; i < this.currentEvidence.length; i++) {
+                        const current = this.currentEvidence[i]
+                        if (!current || i === ind) continue
+                        counter++
+                        const currentArr = this.evidenceList[current]
+                        for (let j = 0; j < currentArr.length; j++) {
+                            const currentGhost = currentArr[j]
+                            if (!(currentGhost in ghostsCounter)) ghostsCounter[currentGhost] = 0
+                            ghostsCounter[currentGhost]++
+                        }
+                    }
+                    if (counter === 0) {
+                        this.optionList[ind] = Object.keys(this.evidenceList)
+                        return
+                    }
+                    const res1 = []
+                    for (let key in ghostsCounter) {
+                        if (ghostsCounter[key] === counter) res1.push(key)
+                    }
+                    let res2 = []
+                    for (let i = 0; i < res1.length; i++) {
+                        res2 = [...res2, ...this.ghostList[res1[i]]]
+                    }
+                    const resFinal = this.sortEvidence(Array.from(new Set(res2)).filter(ev => {
+                        return !this.currentEvidence.filter((e, ind2) => ind2 !== ind).includes(ev)
+                    }))
+                    this.optionList[ind] = resFinal
+                },
+                handleChange(index) {
+                    this.notify(index)
+                },
+                initGhostList() {
+                    for (let key in this.evidenceList) {
+                        const arr = this.evidenceList[key]
+                        for (let i = 0; i < arr.length; i++) {
+                            const currentGhost = arr[i]
+                            if (!(currentGhost in this.ghostList)) this.ghostList[currentGhost] = []
+                            this.ghostList[currentGhost].push(key)
+                        }
+                    }
+                },
+                initOptionList() {
+                    const options = Object.keys(this.evidenceList)
+                    for (let i = 0; i < this.currentEvidence.length; i++) {
+                        this.optionList.push(options)
+                    }
+                },
+                handleEvClick(ev) {
+                    const indexOfNone = this.currentEvidence.indexOf('')
+                    this.currentEvidence.splice(indexOfNone, 1, ev)
+                    this.handleChange(indexOfNone)
+                },
+                clearSelection() {
+                    for (let i = 0; i < this.currentEvidence.length; i++) {
+                        this.currentEvidence.splice(i, 1, '')
+                        this.handleChange(i)
+                    }
+                },
+                sortEvidence(arr) {
+                    const sortedArr = []
+                    Object.keys(this.evidenceList).forEach(evidence => { (arr.includes(evidence)) && (sortedArr.push(evidence)) })
+                    return sortedArr
+                },
+                sortGhosts(arr) {
+                    const sortedGhosts = []
+                    for (let i = 0; i < ghostOrder.length; i++) {
+                        if (arr.includes(ghostOrder[i])) sortedGhosts.push(ghostOrder[i])
+                    }
+                    return sortedGhosts
+                }
+            }
+        })
+    </script>
+</body>
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    li {
+        list-style: none;
+    }
+
+    html,
+    body,
+    #app,
+    .container {
+        height: 100%;
+    }
+
+    h3 {
+        text-align: center;
+        margin-bottom: 5px;
+        color: red;
+        cursor: pointer;
+    }
+
+    .left {
+        font-size: 14px;
+        width: 100px;
+        display: inline-block;
+        border: 2px solid red;
+        border-bottom: none;
+        text-align: center;
+        line-height: 30px;
+    }
+
+    li:last-child .left {
+        border-bottom: 2px solid red;
+    }
+
+    .right {
+        padding-left: 5px;
+        font-size: 14px;
+        width: 250px;
+        line-height: 30px;
+        display: inline-block;
+        border: 2px solid green;
+        border-bottom: none;
+        border-left: none;
+    }
+
+    li:last-child .right {
+        border-bottom: 2px solid green;
+    }
+
+    .table {
+        font-size: 0;
+    }
+
+    .title1,
+    .title2,
+    .title3 {
+        text-align: center;
+        padding-top: 2px;
+        padding-bottom: 3px;
+        color: red;
+    }
+
+    .bottom {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        padding: 0 2px;
+    }
+
+    .ev {
+        border: 2px solid green;
+        padding: 0 5px;
+        border-radius: 5px;
+        margin: 0 2px;
+        margin-bottom: 5px;
+        line-height: 25px;
+        cursor: pointer;
+    }
+
+    .selections {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 5px;
+    }
+
+    .evidence {
+        text-align: center;
+        margin-right: 15px;
+    }
+
+    .evidence:last-child {
+        margin-right: 0;
+    }
+
+    .ulContainer {
+        display: flex;
+        justify-content: center;
+    }
+
+    .bar {
+        background-color: black;
+        height: 2px;
+    }
+
+    .resContainer {
+        display: flex;
+        justify-content: center;
+    }
+
+    .ghostRes {
+        margin-top: 5px;
+        color: red;
+        font-size: 40px;
+        text-align: center;
+        font-weight: bold;
+        border: 5px solid red;
+        padding: 0 10px;
+        border-radius: 16px;
+    }
+
+    select,
+    option {
+        font-size: 16px;
+        cursor: pointer;
+    }
+</style>
+
+</html>
