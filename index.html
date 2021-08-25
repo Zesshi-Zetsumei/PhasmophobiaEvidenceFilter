@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Phasmophobia Filter Tool</title>
     <script src="./vue.min.js"></script>
 </head>
 
@@ -13,35 +13,36 @@
     <div id="app">
         <div class="container">
             <div class="box">
-                <h3 @click="clearSelection">Phasmophobia Filter Tool</h2>
+                <h3 @click="clearSelection">{{language === 'en'? 'Phasmophobia Filter Tool':'恐鬼症证据筛选工具'}}</h2>
                     <div class="selections">
                         <div v-for="(item, index) in currentEvidence" class="evidence">
-                            <div>Evidence {{index+1}}</div>
+                            <div>{{language === 'en'? 'Evidence':'证据' + (index+1)}}</div>
                             <select v-model="currentEvidence[index]" @change="handleChange(index)">
-                                <option :value="''">None</option>
+                                <option :value="''">{{translate('None','e')}}</option>
                                 <option :value="evidence" v-for="(evidence, i) in optionList[index]">
-                                    {{evidence}}</option>
+                                    {{translate(evidence,'e')}}</option>
                             </select>
                         </div>
                     </div>
                     <div class="bar"></div>
                     <div v-if="avaliableGhosts.length !== 1">
                         <div class="mylist">
-                            <div class="title1">Possible Choice for Evidence {{title1Num}}</div>
+                            <div class="title1">{{language === 'en'? 'Avaliable Evidence':'可能的证据' + title1Num}}</div>
                             <div class="bottom">
-                                <div v-for="item in avaliableEvidence" class="ev" @click="handleEvClick(item)"> {{item}}
+                                <div v-for="item in avaliableEvidence" class="ev" @click="handleEvClick(item)">
+                                    {{translate(item, 'e')}}
                                 </div>
                             </div>
                         </div>
                         <div class="bar"></div>
-                        <div class="title2">Possible Ghosts and Details</div>
+                        <div class="title2">{{language === 'en' ? 'Possible Ghost Types and Corresponding Evidence':'可能的类型和对应的证据'}}</div>
                         <div class="ulContainer">
                             <ul class="table">
                                 <li v-for="(key, index) in sortGhosts(Object.keys(info))" :key="key">
-                                    <div class="left">{{key}}</div>
+                                    <div class="left">{{translate(key,'g')}}</div>
                                     <div class="right">
                                         <span v-for="(ev, index) in info[key]" :key="index">
-                                            {{ev+((index ===info[key].length-1)?'':' + ')}}
+                                            {{translate(ev,'e')+((index ===info[key].length-1)?'':' + ')}}
                                         </span>
                                     </div>
                                 </li>
@@ -49,9 +50,9 @@
                         </div>
                     </div>
                     <div v-else>
-                        <div class="title3">The ghost is a</div>
+                        <div class="title3">{{language === 'en'? 'The ghost is a' : '鬼的类型是：'}}</div>
                         <div class="resContainer">
-                            <div class="ghostRes" @click="clearSelection">{{avaliableGhosts[0]}}</div>
+                            <div class="ghostRes" @click="clearSelection">{{translate(avaliableGhosts[0], 'g')}}</div>
                         </div>
                     </div>
             </div>
@@ -65,6 +66,7 @@
             Orbs: '灵球',
             Writing: '笔记',
             Freezing: '刺骨寒温',
+            None: '无'
         }
         gMap = {
             Spirit: '魂魄',
@@ -98,7 +100,8 @@
                     },
                     ghostList: {},
                     currentEvidence: ['', '', ''],
-                    optionList: []
+                    optionList: [],
+                    language: 'ch'
                 }
             },
             computed: {
@@ -153,6 +156,18 @@
                 this.initOptionList()
             },
             methods: {
+                translate(str, type) {
+                    if (this.language === 'en') return str
+                    switch (type) {
+                        case 'g':
+                            return gMap[str]
+                            break;
+
+                        case 'e':
+                            return evMap[str]
+                            break;
+                    }
+                },
                 notify(index) {
                     for (let i = 0; i < this.currentEvidence.length; i++) {
                         if (i !== index) this.update(i)
