@@ -13,48 +13,52 @@
     <div id="app">
         <div class="container">
             <div class="box">
-                <h3 @click="clearSelection">{{language === 'en'? 'Phasmophobia Filter Tool':'恐鬼症证据筛选工具'}}</h2>
-                    <div class="selections">
-                        <div v-for="(item, index) in currentEvidence" class="evidence">
-                            <div>{{language === 'en'? 'Evidence':'证据' + (index+1)}}</div>
-                            <select v-model="currentEvidence[index]" @change="handleChange(index)">
-                                <option :value="''">{{translate('None','e')}}</option>
-                                <option :value="evidence" v-for="(evidence, i) in optionList[index]">
-                                    {{translate(evidence,'e')}}</option>
-                            </select>
+                <button @click="language = (language === 'en'? 'ch':'en')" class="lanBtn">{{language === 'en'?
+                    'English':'中文'}}</button>
+                <div class="header">
+                    <h3 @click="clearSelection">{{language === 'en'? 'Phasmophobia Filter Tool':'恐鬼症证据筛选工具'}}</h3>
+                </div>
+                <div class="selections">
+                    <div v-for="(item, index) in currentEvidence" class="evidence">
+                        <div>{{(language === 'en'? 'Evidence':'证据') + (index+1)}}</div>
+                        <select v-model="currentEvidence[index]" @change="handleChange(index)">
+                            <option :value="''">{{translate('None','e')}}</option>
+                            <option :value="evidence" v-for="(evidence, i) in optionList[index]">
+                                {{translate(evidence,'e')}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="bar"></div>
+                <div v-if="avaliableGhosts.length !== 1">
+                    <div class="mylist">
+                        <div class="title1">{{(language === 'en'? 'Avaliable Evidence':'可能的证据') + title1Num}}</div>
+                        <div class="bottom">
+                            <div v-for="item in avaliableEvidence" class="ev" @click="handleEvClick(item)">
+                                {{translate(item, 'e')}}
+                            </div>
                         </div>
                     </div>
                     <div class="bar"></div>
-                    <div v-if="avaliableGhosts.length !== 1">
-                        <div class="mylist">
-                            <div class="title1">{{language === 'en'? 'Avaliable Evidence':'可能的证据' + title1Num}}</div>
-                            <div class="bottom">
-                                <div v-for="item in avaliableEvidence" class="ev" @click="handleEvClick(item)">
-                                    {{translate(item, 'e')}}
+                    <div class="title2">{{language === 'en' ? `Possible Ghost Types`:'可能的类型'}}</div>
+                    <div class="ulContainer">
+                        <ul class="table">
+                            <li v-for="(key, index) in sortGhosts(Object.keys(info))" :key="key">
+                                <div class="left">{{translate(key,'g')}}</div>
+                                <div class="right">
+                                    <span v-for="(ev, index) in info[key]" :key="index">
+                                        {{translate(ev,'e')+((index ===info[key].length-1)?'':' + ')}}
+                                    </span>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="bar"></div>
-                        <div class="title2">{{language === 'en' ? 'Possible Ghost Types and Corresponding Evidence':'可能的类型和对应的证据'}}</div>
-                        <div class="ulContainer">
-                            <ul class="table">
-                                <li v-for="(key, index) in sortGhosts(Object.keys(info))" :key="key">
-                                    <div class="left">{{translate(key,'g')}}</div>
-                                    <div class="right">
-                                        <span v-for="(ev, index) in info[key]" :key="index">
-                                            {{translate(ev,'e')+((index ===info[key].length-1)?'':' + ')}}
-                                        </span>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
+                            </li>
+                        </ul>
                     </div>
-                    <div v-else>
-                        <div class="title3">{{language === 'en'? 'The ghost is a' : '鬼的类型是：'}}</div>
-                        <div class="resContainer">
-                            <div class="ghostRes" @click="clearSelection">{{translate(avaliableGhosts[0], 'g')}}</div>
-                        </div>
+                </div>
+                <div v-else>
+                    <div class="title3">{{language === 'en'? 'The ghost is a' : '鬼的类型是：'}}</div>
+                    <div class="resContainer">
+                        <div class="ghostRes" @click="clearSelection">{{translate(avaliableGhosts[0], 'g')}}</div>
                     </div>
+                </div>
             </div>
         </div>
     </div>
@@ -101,7 +105,7 @@
                     ghostList: {},
                     currentEvidence: ['', '', ''],
                     optionList: [],
-                    language: 'ch'
+                    language: 'en'
                 }
             },
             computed: {
@@ -269,8 +273,20 @@
         height: 100%;
     }
 
+    .lanBtn {
+        position: absolute;
+        right: 0;
+        top: 0;
+        width: 50px;
+        height: 25px;
+    }
+
+    .header {
+        display: flex;
+        justify-content: center;
+    }
+
     h3 {
-        text-align: center;
         margin-bottom: 5px;
         color: red;
         cursor: pointer;
