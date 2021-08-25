@@ -20,7 +20,7 @@
                 </div>
                 <div class="selections">
                     <div v-for="(item, index) in currentEvidence" class="evidence">
-                        <div>{{(language === 'en'? 'Evidence':'证据') + (index+1)}}</div>
+                        <div>{{(language === 'en'? 'Evidence ':'证据 ') + (index+1)}}</div>
                         <select v-model="currentEvidence[index]" @change="handleChange(index)">
                             <option :value="''">{{translate('None','e')}}</option>
                             <option :value="evidence" v-for="(evidence, i) in optionList[index]">
@@ -31,7 +31,7 @@
                 <div class="bar"></div>
                 <div v-if="avaliableGhosts.length !== 1">
                     <div class="mylist">
-                        <div class="title1">{{(language === 'en'? 'Avaliable Evidence':'可能的证据') + title1Num}}</div>
+                        <div class="title1">{{(language === 'en'? 'Avaliable Evidence ':'可能的证据 ') + title1Num}}</div>
                         <div class="bottom">
                             <div v-for="item in avaliableEvidence" class="ev" @click="handleEvClick(item)">
                                 {{translate(item, 'e')}}
@@ -334,6 +334,10 @@
         color: red;
     }
 
+    .title3{
+        padding-top: 5px;
+    }
+
     .bottom {
         display: flex;
         flex-wrap: wrap;
@@ -360,6 +364,7 @@
     .evidence {
         text-align: center;
         margin-right: 15px;
+        width: 105px;
     }
 
     .evidence:last-child {
@@ -397,6 +402,7 @@
     option {
         font-size: 16px;
         cursor: pointer;
+        width: 100%;
     }
 </style>
 
