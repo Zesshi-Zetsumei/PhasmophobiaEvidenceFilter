@@ -58,7 +58,32 @@
         </div>
     </div>
     <script>
+        evMap = {
+            EMF5: 'EMF5',
+            SpiritBox: '通灵盒',
+            Fingerprints: '指纹',
+            Orbs: '灵球',
+            Writing: '笔记',
+            Freezing: '刺骨寒温',
+        }
+        gMap = {
+            Spirit: '魂魄',
+            Wraith: '死灵',
+            Phantom: '幻影',
+            Poltergeist: '骚灵',
+            Banshee: '妖灵',
+            Jinn: '巨灵',
+            Mare: '梦魇',
+            Revenant: '亡魂',
+            Shade: '暗影',
+            Demon: '恶魔',
+            Yurei: '幽灵',
+            Oni: '赤鬼',
+            Yokai: '妖怪',
+            Hantu: '寒魔'
+        }
         const ghostOrder = ["Spirit", "Wraith", "Phantom", "Poltergeist", "Banshee", "Jinn", "Mare", "Revenant", "Shade", "Demon", "Yurei", "Oni", "Yokai", "Hantu"]
+        const evidenceOrder = ["EMF5", "SpiritBox", "Fingerprints", "Orbs", "Writing", "Freezing"]
         new Vue({
             el: '#app',
             data() {
@@ -196,7 +221,7 @@
                 },
                 sortEvidence(arr) {
                     const sortedArr = []
-                    Object.keys(this.evidenceList).forEach(evidence => { (arr.includes(evidence)) && (sortedArr.push(evidence)) })
+                    evidenceOrder.forEach(evidence => { (arr.includes(evidence)) && (sortedArr.push(evidence)) })
                     return sortedArr
                 },
                 sortGhosts(arr) {
