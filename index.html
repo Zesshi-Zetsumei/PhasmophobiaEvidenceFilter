@@ -58,6 +58,9 @@
                     <div class="resContainer">
                         <div class="ghostRes" @click="clearSelection">{{translate(avaliableGhosts[0], 'g')}}</div>
                     </div>
+                    <div class="instruction">
+                        (Click <span>{{instruction[0]}}</span> arrow <span>{{instruction[1]}}</span> times)
+                    </div>
                 </div>
             </div>
         </div>
@@ -157,6 +160,12 @@
                         !ev && res.push(index + 1)
                     })
                     return res.join(' & ')
+                },
+                instruction() {
+                    if (this.avaliableGhosts.length !== 1) return ['', 0]
+                    const order = ghostOrder.indexOf(this.avaliableGhosts[0]) + 1
+                    if (order <= Math.ceil(ghostOrder.length / 2)) return ['RIGHT', order]
+                    else return ['LEFT', ghostOrder.length + 1 - order]
                 }
             },
             created() {
@@ -340,6 +349,7 @@
     }
 
     .title3 {
+        color: black;
         padding-top: 5px;
     }
 
@@ -409,6 +419,16 @@
         font-size: 16px;
         cursor: pointer;
         width: 100%;
+    }
+
+    .instruction {
+        text-align: center;
+        margin-top: 8px;
+    }
+    
+    .instruction span {
+        color: red;
+        font-weight: bold;
     }
 </style>
 
