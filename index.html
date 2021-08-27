@@ -181,11 +181,12 @@
                 this.initOptionList()
             },
             methods: {
-                //may have bug, need to be careful
                 handleGClick(ghost) {
-                    const currentGhostEv = this.sortEvidence(this.ghostList[ghost])
+                    const evLeft = this.info[ghost]
                     for (let i = 0; i < this.currentEvidence.length; i++) {
-                        this.currentEvidence.splice(i, 1, currentGhostEv[i])
+                        const current = this.currentEvidence[i]
+                        if (current !== '') continue
+                        this.currentEvidence.splice(i, 1, evLeft.shift())
                         this.handleChange(i)
                     }
                 },
