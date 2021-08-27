@@ -67,7 +67,7 @@
             EMF5: 'EMF5',
             SpiritBox: '通灵盒',
             Fingerprints: '指纹',
-            Orbs: '灵球',
+            Orb: '灵球',
             Writing: '笔记',
             Freezing: '刺骨寒温',
             Projector: '投影仪',
@@ -92,18 +92,19 @@
             Myling: '鬼婴'
         }
         const ghostOrder = ["Spirit", "Wraith", "Phantom", "Poltergeist", "Banshee", "Jinn", "Mare", "Revenant", "Shade", "Demon", "Yurei", "Oni", "Yokai", "Hantu", "Goryo", "Myling"]
-        const evidenceOrder = ["EMF5", "SpiritBox", "Fingerprints", "Orbs", "Writing", "Freezing", "Projector"]
+        const evidenceOrder = ["EMF5", "SpiritBox", "Fingerprints", "Orb", "Writing", "Freezing", "Projector"]
         new Vue({
             el: '#app',
             data() {
                 return {
                     evidenceList: {
-                        EMF5: ['Phantom', 'Banshee', 'Jinn', 'Shade', 'Oni', 'Revenant'],
-                        SpiritBox: ['Mare', 'Demon', 'Wraith', 'Jinn', 'Oni', 'Poltergeist', 'Spirit', 'Yokai'],
-                        Fingerprints: ['Banshee', 'Wraith', 'Revenant', 'Poltergeist', 'Spirit', 'Hantu'],
-                        Orbs: ['Phantom', 'Mare', 'Yurei', 'Jinn', 'Shade', 'Poltergeist', 'Hantu', 'Yokai'],
-                        Writing: ['Yurei', 'Demon', 'Shade', 'Oni', 'Revenant', 'Spirit', 'Hantu', 'Yokai'],
-                        Freezing: ['Phantom', 'Banshee', 'Mare', 'Yurei', 'Demon', 'Wraith']
+                        EMF5: ['Goryo', 'Jinn', 'Myling', 'Oni', 'Shade', 'Spirit', 'Wraith'],
+                        SpiritBox: ['Mare', 'Phantom', 'Poltergeist', 'Spirit', 'Wraith', 'Yokai'],
+                        Fingerprints: ['Banshee', 'Demon', 'Goryo', 'Hantu', 'Jinn', 'Myling', 'Phantom', 'Poltergeist'],
+                        Orb: ['Banshee', 'Hantu', 'Mare', 'Revenant', 'Yurei', 'Yokai'],
+                        Writing: ['Demon', 'Mare', 'Myling', 'Poltergeist', 'Revenant', 'Shade', 'Spirit'],
+                        Freezing: ['Demon', 'Revenant', 'Shade', 'Hantu', 'Jinn', 'Oni', 'Yurei'],
+                        Projector: ['Banshee', 'Goryo', 'Oni', 'Phantom', 'Wraith', 'Yurei', 'Yokai']
                     },
                     ghostList: {},
                     currentEvidence: ['', '', ''],
