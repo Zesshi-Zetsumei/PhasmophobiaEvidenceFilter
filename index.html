@@ -58,8 +58,11 @@
                     <div class="resContainer">
                         <div class="ghostRes" @click="clearSelection">{{translate(avaliableGhosts[0], 'g')}}</div>
                     </div>
-                    <div class="instruction">
+                    <div class="instruction" v-if="language==='en'">
                         (Click <span>{{instruction[0]}}</span> arrow <span>{{instruction[1]}}</span> times)
+                    </div>
+                    <div class="instruction" v-else>
+                        （点击 <span>{{translateInstruction(instruction[0])}}</span> 箭头 <span>{{instruction[1]}}</span> 次）
                     </div>
                 </div>
             </div>
@@ -93,6 +96,11 @@
             Hantu: '寒魔',
             Goryo: '御灵',
             Myling: '鬼婴'
+        }
+
+        iMap = {
+            LEFT: '左',
+            RIGHT: '右'
         }
         const ghostOrder = ["Spirit", "Wraith", "Phantom", "Poltergeist", "Banshee", "Jinn", "Mare", "Revenant", "Shade", "Demon", "Yurei", "Oni", "Yokai", "Hantu", "Goryo", "Myling"]
         const evidenceOrder = ["EMF5", "SpiritBox", "Fingerprints", "Orb", "Writing", "Freezing", "Projector"]
@@ -173,6 +181,9 @@
                 this.initOptionList()
             },
             methods: {
+                translateInstruction(str) {
+                    return this.language === 'en' ? str : iMap[str]
+                },
                 translate(str, type) {
                     if (this.language === 'en') return str
                     switch (type) {
@@ -425,7 +436,7 @@
         text-align: center;
         margin-top: 8px;
     }
-    
+
     .instruction span {
         color: red;
         font-weight: bold;
