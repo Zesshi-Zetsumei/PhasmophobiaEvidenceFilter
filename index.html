@@ -43,7 +43,7 @@
                     <div class="ulContainer">
                         <ul class="table">
                             <li v-for="(key, index) in sortGhosts(Object.keys(info))" :key="key">
-                                <div class="left">{{translate(key,'g')}}</div>
+                                <div class="left" @click="handleGClick(key)">{{translate(key,'g')}}</div>
                                 <div class="right">
                                     <span v-for="(ev, index) in info[key]" :key="index">
                                         {{translate(ev,'e')+((index ===info[key].length-1)?'':' + ')}}
@@ -181,6 +181,14 @@
                 this.initOptionList()
             },
             methods: {
+                //may have bug, need to be careful
+                handleGClick(ghost) {
+                    const currentGhostEv = this.sortEvidence(this.ghostList[ghost])
+                    for (let i = 0; i < this.currentEvidence.length; i++) {
+                        this.currentEvidence.splice(i, 1, currentGhostEv[i])
+                        this.handleChange(i)
+                    }
+                },
                 translateInstruction(str) {
                     return this.language === 'en' ? str : iMap[str]
                 },
@@ -325,6 +333,7 @@
         border-bottom: none;
         text-align: center;
         line-height: 28px;
+        cursor: pointer;
     }
 
     li:last-child .left {
